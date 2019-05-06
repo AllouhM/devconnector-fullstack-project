@@ -1,24 +1,23 @@
 const express = require("express");
-const mongoose = require("mongoose");
-const app = express();
+const connectDB = require("./config/db");
+const auth = require("./routes/api/auth");
 const users = require("./routes/api/users");
 const profile = require("./routes/api/profile");
 const posts = require("./routes/api/posts");
 
+const app = express();
+
+// init body parser middleware this is used instead of body-parser
+app.use(express.json({ extended: false }));
 // db config
-const db = require("./config/keys").mongoURI;
+// const db = require("./config/keys").mongoURI;// old ver
+
 //connect Mongodb
-mongoose
-  .connect(db, { useNewUrlParser: true })
-  .then(() => console.log("db connected"))
-  .catch(error => {
-    console.log(error);
-  });
-app.get("/", (req, res) => {
-  res.send("Hello Mahmoud");
-});
+connectDB();
+
 //use routes
 app.use("/api/users", users);
+app.use("/api/auth", auth);
 app.use("/api/profile", profile);
 app.use("/api/posts", posts);
 const port = process.env.PORT || 5000;
